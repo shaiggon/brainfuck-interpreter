@@ -31,7 +31,7 @@ fn main() -> io::Result<()> {
     let program = read_program(&program_path);
     let program_bytes = program.as_bytes();
 
-    println!("{}", program_bytes.len());
+    println!("program length {}", program_bytes.len());
 
     /*let mut stdin = std::io::stdin();
     let mut byte = [0];
@@ -73,9 +73,48 @@ fn main() -> io::Result<()> {
             ',' => {
                 data[data_pointer] = read_byte();
                 instruction_pointer += 1;
-            }
+            },
+            '[' => {
+                if data[data_pointer] == 0 {
+                    let mut i = instruction_pointer + 1;
+                    let mut matching_brackets = 1;
+                    while matching_brackets > 0 && i < program.len() {
+                        let ins = program_bytes[i] as char;
+                        println!("loop {}, {}", i, ins);
+                        match ins {
+                            '[' => matching_brackets += 1,
+                            ']' => matching_brackets -= 1,
+                            _ => (),
+                        }
+                        i += 1;
+                    }
+                    instruction_pointer = i - 1;
+                } else {
+                    println!("else [")
+                }
+                instruction_pointer += 1;
+            },
+            ']' => {
+                if data[data_pointer] != 0 {
+                    let mut i = instruction_pointer - 1;
+                    let mut matching_brackets = 1;
+                    while matching_brackets > 0 && i >= 0 {
+                        let ins = program_bytes[i] as char;
+                        println!("loop {}, {}", i, ins);
+                        match ins {
+                            '[' => matching_brackets -= 1,
+                            ']' => matching_brackets += 1,
+                            _ => (),
+                        }
+                        i -= 1;
+                    }
+                    instruction_pointer = i + 1;
+                } else {
+                    println!("else ]")
+                }
+                instruction_pointer += 1;
+            },
             _ => instruction_pointer += 1,
-
         }
 
         println!("{}", instruction);
