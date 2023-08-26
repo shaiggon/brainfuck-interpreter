@@ -1,7 +1,6 @@
 use std::io;
 use std::io::Read;
 use std::io::Write;
-//use std::env;
 use std::fs;
 
 fn read_program(path: &String) -> String {
@@ -31,48 +30,27 @@ fn main() -> io::Result<()> {
     let program = read_program(&program_path);
     let program_bytes = program.as_bytes();
 
-    println!("program length {}", program_bytes.len());
-
-    /*let mut stdin = std::io::stdin();
-    let mut byte = [0];
-    stdin.read_char(&mut byte).unwrap();
-    println!("The byte from stdin is: {}", byte[0]);*/
-
-    /*let input: Option<u8> = std::io::stdin()
-        .bytes() 
-        .next()
-        .and_then(|result| result.ok())
-        .map(|byte| byte as u8);*/
-
-    //let input = read_byte();
-
     while instruction_pointer < program.len() {
         let instruction = program_bytes[instruction_pointer] as char;
 
         match instruction {
             '>' => {
                 data_pointer += 1;
-                instruction_pointer += 1;
             },
             '<' => {
                 data_pointer -= 1;
-                instruction_pointer += 1;
             },
             '+' => {
                 data[data_pointer] += 1;
-                instruction_pointer += 1;
             },
             '-' => {
                 data[data_pointer] -= 1;
-                instruction_pointer += 1;
             },
             '.' => {
                 io::stdout().write_all(&[data[data_pointer]])?;
-                instruction_pointer += 1;
             },
             ',' => {
                 data[data_pointer] = read_byte();
-                instruction_pointer += 1;
             },
             '[' => {
                 if data[data_pointer] == 0 {
@@ -80,7 +58,6 @@ fn main() -> io::Result<()> {
                     let mut matching_brackets = 1;
                     while matching_brackets > 0 && i < program.len() {
                         let ins = program_bytes[i] as char;
-                        println!("loop {}, {}", i, ins);
                         match ins {
                             '[' => matching_brackets += 1,
                             ']' => matching_brackets -= 1,
@@ -89,10 +66,7 @@ fn main() -> io::Result<()> {
                         i += 1;
                     }
                     instruction_pointer = i - 1;
-                } else {
-                    println!("else [")
                 }
-                instruction_pointer += 1;
             },
             ']' => {
                 if data[data_pointer] != 0 {
@@ -100,7 +74,6 @@ fn main() -> io::Result<()> {
                     let mut matching_brackets = 1;
                     while matching_brackets > 0 && i >= 0 {
                         let ins = program_bytes[i] as char;
-                        println!("loop {}, {}", i, ins);
                         match ins {
                             '[' => matching_brackets -= 1,
                             ']' => matching_brackets += 1,
@@ -109,21 +82,13 @@ fn main() -> io::Result<()> {
                         i -= 1;
                     }
                     instruction_pointer = i + 1;
-                } else {
-                    println!("else ]")
                 }
-                instruction_pointer += 1;
             },
-            _ => instruction_pointer += 1,
+            _ => (),
         }
 
-        println!("{}", instruction);
-        //instruction_pointer += 1;
+        instruction_pointer += 1;
     }
 
-    //println!("byte is: {:?}", input);
-
-    println!("{}", program_path);
-    //println!("{}", program);
     Ok(())
 }
