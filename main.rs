@@ -21,6 +21,28 @@ fn read_byte() -> u8 {
     return input;
 }
 
+enum SearchDirection {
+    Forward = 1,
+    Backwards = -1
+}
+
+// Return instruction pointer position
+fn find_matching_bracket(program_bytes: &[u8], instruction_pointer: usize, direction: SearchDirection) -> usize {
+    let direction_integer = direction as i32;
+    let mut i = (instruction_pointer as i32 + direction_integer) as usize;
+    let mut matching_brackets = 1;
+    while matching_brackets > 0 && i < program_bytes.len() {
+        let ins = program_bytes[i] as char;
+        match ins {
+            '[' => matching_brackets += direction_integer,
+            ']' => matching_brackets -= direction_integer,
+            _ => (),
+        }
+        i = (i as i32 + direction_integer) as usize;
+    }
+    return (i as i32 - direction_integer) as usize;
+}
+
 fn main() -> io::Result<()> {
     let mut data_pointer = 0;
     let mut instruction_pointer = 0;
@@ -54,34 +76,12 @@ fn main() -> io::Result<()> {
             },
             '[' => {
                 if data[data_pointer] == 0 {
-                    let mut i = instruction_pointer + 1;
-                    let mut matching_brackets = 1;
-                    while matching_brackets > 0 && i < program.len() {
-                        let ins = program_bytes[i] as char;
-                        match ins {
-                            '[' => matching_brackets += 1,
-                            ']' => matching_brackets -= 1,
-                            _ => (),
-                        }
-                        i += 1;
-                    }
-                    instruction_pointer = i - 1;
+                    instruction_pointer = find_matching_bracket(program_bytes, instruction_pointer, SearchDirection::Forward);
                 }
             },
             ']' => {
                 if data[data_pointer] != 0 {
-                    let mut i = instruction_pointer - 1;
-                    let mut matching_brackets = 1;
-                    while matching_brackets > 0 && i >= 0 {
-                        let ins = program_bytes[i] as char;
-                        match ins {
-                            '[' => matching_brackets -= 1,
-                            ']' => matching_brackets += 1,
-                            _ => (),
-                        }
-                        i -= 1;
-                    }
-                    instruction_pointer = i + 1;
+                    instruction_pointer = find_matching_bracket(program_bytes, instruction_pointer, SearchDirection::Backwards);
                 }
             },
             _ => (),
