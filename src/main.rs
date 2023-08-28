@@ -58,13 +58,10 @@ fn find_matching_bracket(
     i as usize
 }
 
-fn main() -> io::Result<()> {
+fn run_program(program: &Vec<u8>) -> io::Result<()> {
     let mut data_pointer = 0;
     let mut instruction_pointer = 0;
     let mut data: Vec<u8> = vec![0; 30000];
-
-    let program_path = std::env::args().nth(1).expect("No path given");
-    let program = read_program_bytes(&program_path);
 
     while instruction_pointer < program.len() {
         let instruction = program[instruction_pointer] as char;
@@ -113,6 +110,13 @@ fn main() -> io::Result<()> {
     }
 
     Ok(())
+}
+
+fn main() -> io::Result<()> {
+    let program_path = std::env::args().nth(1).expect("No path given");
+    let program = read_program_bytes(&program_path);
+
+    run_program(&program)
 }
 
 #[cfg(test)]
