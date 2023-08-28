@@ -111,7 +111,8 @@ mod tests {
         let starting_index: usize = 6;
         let expected_end: usize = 15;
         let program = String::from("[[[[]][[[]][[]]]]]").into_bytes();
-        let matching_bracket = find_matching_bracket(&program, starting_index, crate::SearchDirection::Forward);
+        let matching_bracket =
+            find_matching_bracket(&program, starting_index, crate::SearchDirection::Forward);
         assert_eq!(expected_end, matching_bracket);
     }
 
@@ -119,8 +120,9 @@ mod tests {
     fn find_correct_opening_bracket() {
         let expeced_starting_index: usize = 6;
         let end_index: usize = 15;
-        let program = String::from("[[[[]][[[]][[]]]]]").into_bytes();// [[[[]][[[]][[]]]]]
-        let matching_bracket = find_matching_bracket(&program, end_index, crate::SearchDirection::Backwards);
+        let program = String::from("[[[[]][[[]][[]]]]]").into_bytes(); // [[[[]][[[]][[]]]]]
+        let matching_bracket =
+            find_matching_bracket(&program, end_index, crate::SearchDirection::Backwards);
         assert_eq!(expeced_starting_index, matching_bracket);
     }
 }
