@@ -17,6 +17,7 @@ fn read_byte() -> u8 {
         .expect("Not a valid byte")
 }
 
+#[derive(PartialEq, Copy, Clone)]
 enum SearchDirection {
     Forward = 1,
     Backwards = -1,
@@ -33,7 +34,11 @@ fn find_matching_bracket(
     let mut i = instruction_pointer as i32;
     let mut matching_brackets = 1;
     let program_length = program.len() as i32;
-    while matching_brackets > 0 && i < program_length && i >= 0 {
+
+    while matching_brackets > 0
+        && ((i < program_length - 1 && direction == SearchDirection::Forward)
+            || (i > 0 && direction == SearchDirection::Backwards))
+    {
         i += direction_integer;
         let ins = program[i as usize] as char;
         match ins {
@@ -42,6 +47,14 @@ fn find_matching_bracket(
             _ => (),
         }
     }
+
+    if matching_brackets > 0 {
+        panic!(
+            "No matching bracket found for position {}",
+            instruction_pointer
+        );
+    }
+
     i as usize
 }
 
@@ -120,9 +133,16 @@ mod tests {
     fn find_correct_opening_bracket() {
         let expeced_starting_index: usize = 6;
         let end_index: usize = 15;
-        let program = String::from("[[[[]][[[]][[]]]]]").into_bytes(); // [[[[]][[[]][[]]]]]
+        let program = String::from("[[[[]][[[]][[]]]]]").into_bytes();
         let matching_bracket =
             find_matching_bracket(&program, end_index, crate::SearchDirection::Backwards);
         assert_eq!(expeced_starting_index, matching_bracket);
+    }
+
+    #[test]
+    #[should_panic(expected = "No matching bracket found for position")]
+    fn test_no_matching_bracket() {
+        let program = String::from("[[[[[]][[[]][[]]]]]").into_bytes();
+        find_matching_bracket(&program, 0, crate::SearchDirection::Forward);
     }
 }
