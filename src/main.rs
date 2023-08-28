@@ -4,22 +4,17 @@ use std::io::Read;
 use std::io::Write;
 
 fn read_program_bytes(path: &String) -> Vec<u8> {
-    let program = fs::read_to_string(path)
+    fs::read_to_string(path)
         .expect("Should have been able to read the file")
-        .into_bytes();
-
-    return program;
+        .into_bytes()
 }
 
 fn read_byte() -> u8 {
-    let input: u8 = std::io::stdin()
+    std::io::stdin()
         .bytes()
         .next()
         .and_then(|result| result.ok())
-        .map(|byte| byte as u8)
-        .expect("Not a valid byte");
-
-    return input;
+        .expect("Not a valid byte")
 }
 
 enum SearchDirection {
@@ -47,7 +42,7 @@ fn find_matching_bracket(
             _ => (),
         }
     }
-    return i as usize;
+    i as usize
 }
 
 fn main() -> io::Result<()> {
