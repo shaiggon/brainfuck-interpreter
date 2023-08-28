@@ -3,9 +3,9 @@ use std::io::Read;
 use std::io::Write;
 use std::fs;
 
-fn read_program(path: &String) -> String {
+fn read_program_bytes(path: &String) -> Vec<u8> {
     let program = fs::read_to_string(path)
-        .expect("Should have been able to read the file");
+        .expect("Should have been able to read the file").into_bytes();
 
     return program;
 }
@@ -28,14 +28,14 @@ enum SearchDirection {
 
 // Return instruction pointer position
 // Current instruction pointer must be in a bracket that matches the direction
-fn find_matching_bracket(program_bytes: &[u8], instruction_pointer: usize, direction: SearchDirection) -> usize {
+fn find_matching_bracket(program: &Vec<u8>, instruction_pointer: usize, direction: SearchDirection) -> usize {
     let direction_integer = direction as i32;
     let mut i = instruction_pointer as i32 + direction_integer;
     let mut matching_brackets = 1;
-    let program_length = program_bytes.len() as i32;
+    let program_length = program.len() as i32;
     while matching_brackets > 0 && i < program_length && i >= 0 {
         i += direction_integer;
-        let ins = program_bytes[i as usize] as char;
+        let ins = program[i as usize] as char;
         match ins {
             '[' => matching_brackets += direction_integer,
             ']' => matching_brackets -= direction_integer,
@@ -51,11 +51,10 @@ fn main() -> io::Result<()> {
     let mut data: Vec<u8> = vec![0; 30000];
 
     let program_path = std::env::args().nth(1).expect("No path given");
-    let program = read_program(&program_path);
-    let program_bytes = program.as_bytes();
+    let program = read_program_bytes(&program_path);
 
     while instruction_pointer < program.len() {
-        let instruction = program_bytes[instruction_pointer] as char;
+        let instruction = program[instruction_pointer] as char;
 
         match instruction {
             '>' => {
@@ -78,12 +77,12 @@ fn main() -> io::Result<()> {
             },
             '[' => {
                 if data[data_pointer] == 0 {
-                    instruction_pointer = find_matching_bracket(program_bytes, instruction_pointer, SearchDirection::Forward);
+                    instruction_pointer = find_matching_bracket(&program, instruction_pointer, SearchDirection::Forward);
                 }
             },
             ']' => {
                 if data[data_pointer] != 0 {
-                    instruction_pointer = find_matching_bracket(program_bytes, instruction_pointer, SearchDirection::Backwards);
+                    instruction_pointer = find_matching_bracket(&program, instruction_pointer, SearchDirection::Backwards);
                 }
             },
             _ => (),
