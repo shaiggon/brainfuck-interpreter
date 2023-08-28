@@ -20,7 +20,7 @@ fn read_byte() -> u8 {
 #[derive(PartialEq, Copy, Clone)]
 enum SearchDirection {
     Forward = 1,
-    Backwards = -1,
+    Backward = -1,
 }
 
 // Return instruction pointer position
@@ -37,7 +37,7 @@ fn find_matching_bracket(
 
     while matching_brackets > 0
         && ((i < program_length - 1 && direction == SearchDirection::Forward)
-            || (i > 0 && direction == SearchDirection::Backwards))
+            || (i > 0 && direction == SearchDirection::Backward))
     {
         i += direction_integer;
         let ins = program[i as usize] as char;
@@ -102,7 +102,7 @@ fn main() -> io::Result<()> {
                     instruction_pointer = find_matching_bracket(
                         &program,
                         instruction_pointer,
-                        SearchDirection::Backwards,
+                        SearchDirection::Backward,
                     );
                 }
             }
@@ -135,7 +135,7 @@ mod tests {
         let end_index: usize = 15;
         let program = String::from("[[[[]][[[]][[]]]]]").into_bytes();
         let matching_bracket =
-            find_matching_bracket(&program, end_index, crate::SearchDirection::Backwards);
+            find_matching_bracket(&program, end_index, crate::SearchDirection::Backward);
         assert_eq!(expeced_starting_index, matching_bracket);
     }
 
