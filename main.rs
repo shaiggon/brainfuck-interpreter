@@ -27,20 +27,22 @@ enum SearchDirection {
 }
 
 // Return instruction pointer position
+// Current instruction pointer must be in a bracket that matches the direction
 fn find_matching_bracket(program_bytes: &[u8], instruction_pointer: usize, direction: SearchDirection) -> usize {
     let direction_integer = direction as i32;
-    let mut i = (instruction_pointer as i32 + direction_integer) as usize;
+    let mut i = instruction_pointer as i32 + direction_integer;
     let mut matching_brackets = 1;
-    while matching_brackets > 0 && i < program_bytes.len() {
-        let ins = program_bytes[i] as char;
+    let program_length = program_bytes.len() as i32;
+    while matching_brackets > 0 && i < program_length && i >= 0 {
+        i += direction_integer;
+        let ins = program_bytes[i as usize] as char;
         match ins {
             '[' => matching_brackets += direction_integer,
             ']' => matching_brackets -= direction_integer,
             _ => (),
         }
-        i = (i as i32 + direction_integer) as usize;
     }
-    return (i as i32 - direction_integer) as usize;
+    return i as usize;
 }
 
 fn main() -> io::Result<()> {
