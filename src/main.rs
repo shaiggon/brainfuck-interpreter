@@ -30,7 +30,7 @@ fn find_matching_bracket(
     direction: SearchDirection,
 ) -> usize {
     let direction_integer = direction as i32;
-    let mut i = instruction_pointer as i32 + direction_integer;
+    let mut i = instruction_pointer as i32;
     let mut matching_brackets = 1;
     let program_length = program.len() as i32;
     while matching_brackets > 0 && i < program_length && i >= 0 {
@@ -100,4 +100,27 @@ fn main() -> io::Result<()> {
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::find_matching_bracket;
+
+    #[test]
+    fn find_correct_closing_bracket() {
+        let starting_index: usize = 6;
+        let expected_end: usize = 15;
+        let program = String::from("[[[[]][[[]][[]]]]]").into_bytes();
+        let matching_bracket = find_matching_bracket(&program, starting_index, crate::SearchDirection::Forward);
+        assert_eq!(expected_end, matching_bracket);
+    }
+
+    #[test]
+    fn find_correct_opening_bracket() {
+        let expeced_starting_index: usize = 6;
+        let end_index: usize = 15;
+        let program = String::from("[[[[]][[[]][[]]]]]").into_bytes();// [[[[]][[[]][[]]]]]
+        let matching_bracket = find_matching_bracket(&program, end_index, crate::SearchDirection::Backwards);
+        assert_eq!(expeced_starting_index, matching_bracket);
+    }
 }
