@@ -3,7 +3,6 @@ use std::process::Command;
 use assert_cmd::prelude::*;
 use predicates::prelude::*;
 
-
 #[test]
 #[should_panic(expected = "No path given")]
 fn file_not_given() {
