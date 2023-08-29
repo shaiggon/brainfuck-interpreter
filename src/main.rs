@@ -88,7 +88,7 @@ fn run_program(program: &Vec<u8>) -> io::Result<()> {
             '[' => {
                 if data[data_pointer] == 0 {
                     instruction_pointer = find_matching_bracket(
-                        &program,
+                        program,
                         instruction_pointer,
                         SearchDirection::Forward,
                     );
@@ -97,7 +97,7 @@ fn run_program(program: &Vec<u8>) -> io::Result<()> {
             ']' => {
                 if data[data_pointer] != 0 {
                     instruction_pointer = find_matching_bracket(
-                        &program,
+                        program,
                         instruction_pointer,
                         SearchDirection::Backward,
                     );
